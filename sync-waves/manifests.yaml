@@ -17,16 +17,16 @@ spec:
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
-  name: backend
+  name: backendd
 spec:
   replicas: 1
   selector:
     matchLabels:
-      tier: backend
+      tier: backendd
   template:
     metadata:
       labels:
-        tier: backend
+        tier: backendd
     spec:
       containers:
         - name: main
@@ -35,10 +35,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend
+  name: backendd
 spec:
   selector:
-    tier: backend
+    tier: backendd
   ports:
     - protocol: TCP
       port: 8080
@@ -68,6 +68,8 @@ metadata:
   name: frontend
   annotations:
     argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave-group: "frontend"
+    argocd.argoproj.io/depends-on: "sidend"
 spec:
   replicas: 1
   selector:
@@ -88,9 +90,47 @@ metadata:
   name: frontend
   annotations:
     argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave-group: "frontend"
+    argocd.argoproj.io/depends-on: "sidend"
 spec:
   selector:
     tier: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: sidend
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave-group: "sidend"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: sidend
+  template:
+    metadata:
+      labels:
+        tier: sidend
+    spec:
+      containers:
+        - name: main
+          image: nginx:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sidend
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave-group: "sidend"
+spec:
+  selector:
+    tier: sidend
   ports:
     - protocol: TCP
       port: 80
@@ -103,7 +143,8 @@ metadata:
   annotations:
     argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "7"
+    argocd.argoproj.io/depends-on: "sideend"
 spec:
   template:
     spec:
