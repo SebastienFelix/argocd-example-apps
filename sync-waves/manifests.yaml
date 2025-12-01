@@ -67,7 +67,7 @@ kind: ReplicaSet
 metadata:
   name: frontend
   annotations:
-    argocd.argoproj.io/sync-wave: "95"
+    argocd.argoproj.io/sync-wave: "94"
     argocd.argoproj.io/sync-wave-group: "frontend"
     argocd.argoproj.io/depends-on: "sidend"
 spec:
@@ -83,13 +83,24 @@ spec:
       containers:
         - name: main
           image: nginx:latest
+          args:
+          - /bin/sh
+          - -c
+          - touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600
+          livenessProbe:
+            exec:
+              command:
+              - cat
+              - /tmp/healthy
+            initialDelaySeconds: 60
+            periodSeconds: 60
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: frontend
   annotations:
-    argocd.argoproj.io/sync-wave: "95"
+    argocd.argoproj.io/sync-wave: "94"
     argocd.argoproj.io/sync-wave-group: "frontend"
     argocd.argoproj.io/depends-on: "sidend"
 spec:
@@ -105,7 +116,7 @@ kind: ReplicaSet
 metadata:
   name: sidend
   annotations:
-    argocd.argoproj.io/sync-wave: "96"
+    argocd.argoproj.io/sync-wave: "95"
     argocd.argoproj.io/sync-wave-group: "sidend"
 spec:
   replicas: 1
@@ -120,6 +131,17 @@ spec:
       containers:
         - name: main
           image: alpine:latest
+          args:
+          - /bin/sh
+          - -c
+          - touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600
+          livenessProbe:
+            exec:
+              command:
+              - cat
+              - /tmp/healthy
+            initialDelaySeconds: 15
+            periodSeconds: 15
           command: ["sleep", "30"]
 ---
 apiVersion: v1
@@ -127,7 +149,7 @@ kind: Service
 metadata:
   name: sidend
   annotations:
-    argocd.argoproj.io/sync-wave: "96"
+    argocd.argoproj.io/sync-wave: "95"
     argocd.argoproj.io/sync-wave-group: "sidend"
 spec:
   selector:
