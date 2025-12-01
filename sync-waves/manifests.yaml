@@ -67,7 +67,7 @@ kind: ReplicaSet
 metadata:
   name: frontend
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "98"
     argocd.argoproj.io/sync-wave-group: "frontend"
     argocd.argoproj.io/depends-on: "sidend"
 spec:
@@ -89,7 +89,7 @@ kind: Service
 metadata:
   name: frontend
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "98"
     argocd.argoproj.io/sync-wave-group: "frontend"
     argocd.argoproj.io/depends-on: "sidend"
 spec:
@@ -105,7 +105,7 @@ kind: ReplicaSet
 metadata:
   name: sidend
   annotations:
-    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/sync-wave: "99"
     argocd.argoproj.io/sync-wave-group: "sidend"
 spec:
   replicas: 1
@@ -127,7 +127,7 @@ kind: Service
 metadata:
   name: sidend
   annotations:
-    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/sync-wave: "99"
     argocd.argoproj.io/sync-wave-group: "sidend"
 spec:
   selector:
